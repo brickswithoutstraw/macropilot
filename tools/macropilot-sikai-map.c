@@ -64,18 +64,19 @@ static const struct binding macropilot_layout[] = {
   {15, 0x6f, "knob clockwise → F20" },
 };
 
-static void print_binding(const struct binding *binding) {
+static void print_binding(const struct binding *binding, unsigned char layer) {
   unsigned char first[65], second[65];
-  build_simple_key_part(first, binding->key_id, 1, 0, 0, 0);
-  build_simple_key_part(second, binding->key_id, 1, 1, 0, binding->hid_code);
+  build_simple_key_part(first, binding->key_id, layer, 0, 0, 0);
+  build_simple_key_part(second, binding->key_id, layer, 1, 0, binding->hid_code);
   print_packet(binding->label, first);
   print_packet("  key payload", second);
 }
 
-static int send_binding(libusb_device_handle *handle, const struct binding *binding) {
+static int send_binding(libusb_device_handle *handle, const struct binding *binding,
+                        unsigned char layer) {
   unsigned char first[65], second[65];
-  build_simple_key_part(first, binding->key_id, 1, 0, 0, 0);
-  build_simple_key_part(second, binding->key_id, 1, 1, 0, binding->hid_code);
+  build_simple_key_part(first, binding->key_id, layer, 0, 0, 0);
+  build_simple_key_part(second, binding->key_id, layer, 1, 0, binding->hid_code);
   if (send_packet(handle, first)) return 1;
   usleep(20000);
   return send_packet(handle, second);
@@ -84,21 +85,29 @@ static int send_binding(libusb_device_handle *handle, const struct binding *bind
 int main(int argc, char **argv) {
   int layout = argc == 2 && (strcmp(argv[1], "--preview-macropilot-layout") == 0 ||
                              strcmp(argv[1], "--apply-macropilot-layout") == 0);
+  int boot_layout = argc == 2 && (strcmp(argv[1], "--preview-macropilot-boot-layout") == 0 ||
+                                  strcmp(argv[1], "--apply-macropilot-boot-layout") == 0);
   int key_a = argc == 2 && (strcmp(argv[1], "--preview-key1-a") == 0 ||
                             strcmp(argv[1], "--apply-key1-a") == 0);
+  int boot_key_a = argc == 2 && (strcmp(argv[1], "--preview-key1-a-boot") == 0 ||
+                                 strcmp(argv[1], "--apply-key1-a-boot") == 0);
   int apply = argc == 2 && (strcmp(argv[1], "--apply-key1-f13") == 0 ||
-                             strcmp(argv[1], "--apply-key1-a") == 0);
+                             strcmp(argv[1], "--apply-key1-a") == 0 ||
+                             strcmp(argv[1], "--apply-key1-a-boot") == 0);
   int preview = argc == 2 && (strcmp(argv[1], "--preview-key1-f13") == 0 ||
-                               strcmp(argv[1], "--preview-key1-a") == 0);
-  if (!apply && !preview && !layout) {
-    fprintf(stderr, "usage: %s --preview-key1-a | --apply-key1-a | --preview-key1-f13 | --apply-key1-f13 | --preview-macropilot-layout | --apply-macropilot-layout\n", argv[0]);
+                               strcmp(argv[1], "--preview-key1-a") == 0 ||
+                               strcmp(argv[1], "--preview-key1-a-boot") == 0);
+  if (!apply && !preview && !layout && !boot_layout) {
+    fprintf(stderr, "usage: %s --preview-key1-a | --apply-key1-a | --preview-key1-a-boot | --apply-key1-a-boot | --preview-key1-f13 | --apply-key1-f13 | --preview-macropilot-layout | --apply-macropilot-layout | --preview-macropilot-boot-layout | --apply-macropilot-boot-layout\n", argv[0]);
     return 2;
   }
 
-  int apply_layout = argc == 2 && strcmp(argv[1], "--apply-macropilot-layout") == 0;
-  if (layout) {
+  int apply_layout = argc == 2 && (strcmp(argv[1], "--apply-macropilot-layout") == 0 ||
+                                   strcmp(argv[1], "--apply-macropilot-boot-layout") == 0);
+  if (layout || boot_layout) {
+    unsigned char layout_layer = boot_layout ? 0 : 1;
     for (size_t i = 0; i < sizeof(macropilot_layout) / sizeof(macropilot_layout[0]); i++) {
-      print_binding(&macropilot_layout[i]);
+      print_binding(&macropilot_layout[i], layout_layer);
     }
     unsigned char layout_commit[65];
     build_commit(layout_commit);
@@ -117,7 +126,7 @@ int main(int argc, char **argv) {
     }
     int layout_failed = 0;
     for (size_t i = 0; i < sizeof(macropilot_layout) / sizeof(macropilot_layout[0]); i++) {
-      if (send_binding(layout_handle, &macropilot_layout[i])) { layout_failed = 1; break; }
+      if (send_binding(layout_handle, &macropilot_layout[i], layout_layer)) { layout_failed = 1; break; }
       usleep(20000);
     }
     if (!layout_failed) layout_failed = send_packet(layout_handle, layout_commit);
@@ -127,13 +136,14 @@ int main(int argc, char **argv) {
     return layout_failed;
   }
 
+  unsigned char layer = boot_key_a ? 0 : 1;
   unsigned char first[65], second[65], commit[65];
-  unsigned char hid_code = key_a ? 0x04 : 0x68; // HID A or F13
-  build_simple_key_part(first, 1, 1, 0, 0, 0);
-  build_simple_key_part(second, 1, 1, 1, 0, hid_code);
+  unsigned char hid_code = (key_a || boot_key_a) ? 0x04 : 0x68; // HID A or F13
+  build_simple_key_part(first, 1, layer, 0, 0, 0);
+  build_simple_key_part(second, 1, layer, 1, 0, hid_code);
   build_commit(commit);
   print_packet("key 1: modifier setup", first);
-  print_packet(key_a ? "key 1 -> A, layer 1" : "key 1 -> F13, layer 1", second);
+  print_packet((key_a || boot_key_a) ? "key 1 -> A" : "key 1 -> F13", second);
   print_packet("commit", commit);
   if (!apply) return 0;
 

@@ -112,6 +112,14 @@ apply operation. Writing is always explicit:
 tools/macropilot-sikai-map --apply-macropilot-layout
 ```
 
+Some pads boot into factory layer 0 after a USB reconnect. For those pads use
+the explicit boot-layer variant, which writes the same neutral layout to layer
+0:
+
+```sh
+tools/macropilot-sikai-map --apply-macropilot-boot-layout
+```
+
 ## Limits
 
 This adapter configures the key and knob outputs only. LED and RGB control are
