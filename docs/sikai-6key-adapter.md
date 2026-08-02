@@ -132,8 +132,17 @@ tools/macropilot-sikai-map --apply-calibration-layout
 
 ## Limits
 
-This adapter configures the key and knob outputs only. LED and RGB control are
-deliberately out of scope until their commands are independently verified.
-The companion app should react to the neutral F-keys on the host, which keeps
+This adapter configures the key and knob outputs. The `1189:8890` family also
+supports simple built-in LED modes through `ch57x-keyboard-tool`; mode `1` was
+verified as a steady red backlight and mode `2` as a working reactive effect on
+the reference pad. These are whole-device firmware modes, not yet per-action
+RGB feedback.
+
+```sh
+tools/ch57x-keyboard-tool --product-id 0x8890 led 1  # steady red
+tools/ch57x-keyboard-tool --product-id 0x8890 led 2  # reactive
+```
+
+The companion app should react to the neutral Control-Option shortcuts on the host, which keeps
 the physical device useful with any workflow and avoids tying feedback to one
 vendor firmware.
