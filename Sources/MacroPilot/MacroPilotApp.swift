@@ -30,8 +30,15 @@ final class MacroPilotApp: NSObject, NSApplicationDelegate {
   }
 
   private func installStatusItem() {
-    statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-    statusItem.button?.title = "MP"
+    statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+    if let image = Bundle.main.image(forResource: "MenuBarIcon") {
+      image.isTemplate = true
+      image.size = NSSize(width: 18, height: 18)
+      statusItem.button?.image = image
+      statusItem.button?.imagePosition = .imageOnly
+    } else {
+      statusItem.button?.title = "MP"
+    }
     statusItem.button?.toolTip = "MacroPilot starting"
 
     let menu = NSMenu()

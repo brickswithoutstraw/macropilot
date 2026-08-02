@@ -2,6 +2,7 @@
 .build/
 dist/
 MacApp/AppIcon.iconset/
+MacApp/MenuBarIcon-chroma.png
 
 # Locally compiled diagnostics and downloaded upstream release artifacts.
 tools/ch57x-keyboard-tool

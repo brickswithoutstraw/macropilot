@@ -15,6 +15,7 @@ fi
 mkdir -p "$app_dir/Contents/MacOS" "$app_dir/Contents/Resources"
 cp "$project_root/.build/release/MacroPilot" "$app_dir/Contents/MacOS/MacroPilot"
 cp "$project_root/MacApp/Info.plist" "$app_dir/Contents/Info.plist"
+cp "$project_root/MacApp/MenuBarIcon.png" "$app_dir/Contents/Resources/MenuBarIcon.png"
 xcrun actool "$project_root/MacApp/Assets.xcassets" \
   --compile "$app_dir/Contents/Resources" \
   --platform macosx \
@@ -28,5 +29,6 @@ if [[ -x "$project_root/tools/ch57x-keyboard-tool" ]]; then
   cp "$project_root/tools/ch57x-keyboard-tool" "$app_dir/Contents/Resources/ch57x-keyboard-tool"
 fi
 
+xattr -cr "$app_dir"
 codesign --force --sign - "$app_dir"
 echo "Built $app_dir"

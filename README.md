@@ -83,6 +83,9 @@ The app's **LEDs** menu exposes the three verified modes for the reference
 open-source LED helper when it is present; source-only checkouts can still use
 the documented command in the adapter guide.
 
+The pilot mark in the menu bar is a macOS template image, so the system tints
+it automatically for light and dark menu bars.
+
 ## Reference hardware mapping
 
 The `profiles/ch57x-8890-neutral-controls.yaml` file is compatible with
