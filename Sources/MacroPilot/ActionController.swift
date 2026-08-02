@@ -7,6 +7,7 @@ final class ActionController {
   private var lastStatus = "MacroPilot ready"
   private var pendingConfirmation: (action: MacroAction, expires: Date)?
   private var profileIndex = 0
+  private var chatBarReadyUntil: Date?
   private let profiles = ["AI Workbench", "General", "Media"]
 
   func perform(_ action: MacroAction) {
@@ -19,20 +20,26 @@ final class ActionController {
 
     switch action {
     case .summon:
-      activateCodexOrMacroPilot()
+      openChatGPTChatBar()
     case .voice:
       announce("Voice key reached MacroPilot. Set ChatGPT Dictation Toggle to Control-Option-B.")
     case .captureContext:
-      captureContext()
+      shareActiveWindowWithChatGPT()
     case .stop:
-      postKey(keyCode: 53, modifiers: [])
-      announce("Stop: sent Escape to the active app")
+      if postKey(keyCode: 47, modifiers: [.maskCommand]) {
+        announce("Stop: sent Command-Period to ChatGPT")
+      }
     case .send:
-      postKey(keyCode: 36, modifiers: [.maskCommand])
-      announce("Send: sent Command-Return to the active app")
+      guard (chatBarReadyUntil ?? .distantPast) > Date() else {
+        announce("Open the ChatGPT Chat Bar first, then use Send")
+        return
+      }
+      if postKey(keyCode: 36, modifiers: []) {
+        announce("Send: sent Return to the focused ChatGPT prompt")
+      }
     case .newTask:
-      postKey(keyCode: 45, modifiers: [.maskCommand])
-      announce("New Task: sent Command-N to the active app")
+      openChatGPTChatBar()
+      announce("New Chat: requested the ChatGPT Chat Bar")
     case .previousProfile:
       profileIndex = (profileIndex + profiles.count - 1) % profiles.count
       announce("Profile: \(profiles[profileIndex])")
@@ -69,29 +76,26 @@ final class ActionController {
     return pendingConfirmation.action == action && pendingConfirmation.expires > Date()
   }
 
-  private func activateCodexOrMacroPilot() {
-    let candidates = NSWorkspace.shared.runningApplications.filter {
-      $0.localizedName?.localizedCaseInsensitiveContains("Codex") == true
-    }
-    if let codex = candidates.first {
-      codex.activate(options: [])
-      announce("Codex brought forward")
-    } else {
-      NSApp.activate(ignoringOtherApps: true)
-      announce("MacroPilot brought forward — Codex is not running")
+  private func openChatGPTChatBar() {
+    // ChatGPT for macOS uses Option-Space as its configurable Chat Bar shortcut.
+    if postKey(keyCode: 49, modifiers: [.maskAlternate]) {
+      chatBarReadyUntil = Date().addingTimeInterval(15)
+      announce("ChatGPT Chat Bar requested")
     }
   }
 
-  private func captureContext() {
-    let text = NSPasteboard.general.string(forType: .string) ?? ""
-    let message = text.isEmpty ? "No text found on the clipboard" : "Captured \(text.count) clipboard characters"
-    announce(message)
+  private func shareActiveWindowWithChatGPT() {
+    // ChatGPT's standard shortcut for sharing the active window as context.
+    if postKey(keyCode: 19, modifiers: [.maskCommand, .maskShift]) {
+      announce("Context: requested active-window sharing with ChatGPT")
+    }
   }
 
-  private func postKey(keyCode: CGKeyCode, modifiers: CGEventFlags) {
+  @discardableResult
+  private func postKey(keyCode: CGKeyCode, modifiers: CGEventFlags) -> Bool {
     guard AXIsProcessTrusted() else {
       announce("Accessibility permission is required before MacroPilot can send keys")
-      return
+      return false
     }
     let source = CGEventSource(stateID: .hidSystemState)
     let down = CGEvent(keyboardEventSource: source, virtualKey: keyCode, keyDown: true)
@@ -100,5 +104,6 @@ final class ActionController {
     up?.flags = modifiers
     down?.post(tap: .cghidEventTap)
     up?.post(tap: .cghidEventTap)
+    return true
   }
 }

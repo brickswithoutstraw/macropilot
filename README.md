@@ -63,8 +63,11 @@ ChatGPT claims the shortcut, MacroPilot deliberately no longer sees that key;
 the crosshair shown by ChatGPT Dictation means it is ready for you to choose a
 text field and speak.
 
-Default actions are Control-Option-A summon, B voice, C capture context, D
-stop, E send, F new task, G/I profile previous/next, and H cycle profile.
+The first concrete profile targets ChatGPT desktop: Control-Option-A opens the
+Chat Bar, B is its configured Dictation toggle, C shares the active window as
+context, D stops streaming, E sends the focused prompt (after opening Chat
+Bar), and F opens a new Chat Bar. G/I select the previous/next local profile;
+H cycles profiles.
 
 ## Reference hardware mapping
 
