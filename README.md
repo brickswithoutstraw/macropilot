@@ -44,8 +44,11 @@ actions, and profile cycling. It does not use an API key or transmit your
 context anywhere.
 
 ```sh
-swift run MacroPilot
+DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer swift run MacroPilot
 ```
+
+This development launch requires the full Xcode app. A packaged `.app` is the
+next distribution step, so people will not need developer tools to use it.
 
 The first time you use an action that sends a shortcut, choose **Check
 Accessibility Permission** from the `MP` menu-bar item and approve it in macOS
