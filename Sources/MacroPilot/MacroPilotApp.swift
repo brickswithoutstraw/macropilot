@@ -37,6 +37,7 @@ final class MacroPilotApp: NSObject, NSApplicationDelegate {
     let menu = NSMenu()
     menu.addItem(NSMenuItem(title: "MacroPilot", action: nil, keyEquivalent: ""))
     menu.addItem(.separator())
+    menu.addItem(NSMenuItem(title: "Voice Setup…", action: #selector(showVoiceSetup), keyEquivalent: ""))
     menu.addItem(NSMenuItem(title: "Check Accessibility Permission", action: #selector(requestAccessibility), keyEquivalent: ""))
     menu.addItem(NSMenuItem(title: "Show Last Action", action: #selector(showLastAction), keyEquivalent: ""))
     menu.addItem(.separator())
@@ -60,5 +61,6 @@ final class MacroPilotApp: NSObject, NSApplicationDelegate {
   }
 
   @objc private func showLastAction() { controller.presentStatus() }
+  @objc private func showVoiceSetup() { controller.presentVoiceSetup() }
   @objc private func quit() { NSApp.terminate(nil) }
 }

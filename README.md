@@ -58,6 +58,11 @@ seconds. For Voice, configure ChatGPT desktop's Voice shortcut as
 Control-Option-B; MacroPilot sends that exact chord and does not need its own
 microphone permission.
 
+Choose **Voice Setup…** from the `MP` menu for the in-app checklist. Once
+ChatGPT claims the shortcut, MacroPilot deliberately no longer sees that key;
+the crosshair shown by ChatGPT Dictation means it is ready for you to choose a
+text field and speak.
+
 Default actions are Control-Option-A summon, B voice, C capture context, D
 stop, E send, F new task, G/I profile previous/next, and H cycle profile.
 

@@ -21,7 +21,7 @@ final class ActionController {
     case .summon:
       activateCodexOrMacroPilot()
     case .voice:
-      announce("Voice: sent Control-Option-B to the configured ChatGPT voice shortcut")
+      announce("Voice key reached MacroPilot. Set ChatGPT Dictation Toggle to Control-Option-B.")
     case .captureContext:
       captureContext()
     case .stop:
@@ -53,6 +53,14 @@ final class ActionController {
     alert.messageText = "MacroPilot"
     alert.informativeText = lastStatus
     alert.addButton(withTitle: "OK")
+    alert.runModal()
+  }
+
+  func presentVoiceSetup() {
+    let alert = NSAlert()
+    alert.messageText = "MacroPilot Voice"
+    alert.informativeText = "1. In ChatGPT Settings → Dictation, set Toggle dictation hotkey to Control-Option-B.\n\n2. Grant ChatGPT Microphone permission.\n\n3. Press the pad’s top-middle key. A crosshair means Dictation is ready: click the text field where words should go, then speak. Press the same key again to stop.\n\nWhen ChatGPT owns the shortcut, MacroPilot will not log the Voice key—that is expected."
+    alert.addButton(withTitle: "Got it")
     alert.runModal()
   }
 
