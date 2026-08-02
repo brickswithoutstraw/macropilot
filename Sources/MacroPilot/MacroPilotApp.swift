@@ -39,6 +39,14 @@ final class MacroPilotApp: NSObject, NSApplicationDelegate {
     menu.addItem(.separator())
     menu.addItem(NSMenuItem(title: "Voice Setup…", action: #selector(showVoiceSetup), keyEquivalent: ""))
     menu.addItem(NSMenuItem(title: "Check Accessibility Permission", action: #selector(requestAccessibility), keyEquivalent: ""))
+    let leds = NSMenuItem(title: "LEDs", action: nil, keyEquivalent: "")
+    let ledMenu = NSMenu()
+    ledMenu.addItem(NSMenuItem(title: "Off", action: #selector(ledOff), keyEquivalent: ""))
+    ledMenu.addItem(NSMenuItem(title: "Steady red", action: #selector(ledSteady), keyEquivalent: ""))
+    ledMenu.addItem(NSMenuItem(title: "Reactive", action: #selector(ledReactive), keyEquivalent: ""))
+    ledMenu.items.forEach { $0.target = self }
+    leds.submenu = ledMenu
+    menu.addItem(leds)
     menu.addItem(NSMenuItem(title: "Show Last Action", action: #selector(showLastAction), keyEquivalent: ""))
     menu.addItem(.separator())
     menu.addItem(NSMenuItem(title: "Quit MacroPilot", action: #selector(quit), keyEquivalent: "q"))
@@ -62,5 +70,8 @@ final class MacroPilotApp: NSObject, NSApplicationDelegate {
 
   @objc private func showLastAction() { controller.presentStatus() }
   @objc private func showVoiceSetup() { controller.presentVoiceSetup() }
+  @objc private func ledOff() { controller.setLED(mode: 0, name: "off") }
+  @objc private func ledSteady() { controller.setLED(mode: 1, name: "steady red") }
+  @objc private func ledReactive() { controller.setLED(mode: 2, name: "reactive") }
   @objc private func quit() { NSApp.terminate(nil) }
 }

@@ -69,6 +69,20 @@ context, D stops streaming, E sends the focused prompt (after opening Chat
 Bar), and F opens a new Chat Bar. G/I select the previous/next local profile;
 H cycles profiles.
 
+## Build the Mac app
+
+Build a menu-bar `.app` with a stable bundle identity for macOS permissions:
+
+```sh
+./scripts/build-mac-app.sh
+open dist/MacroPilot.app
+```
+
+The app's **LEDs** menu exposes the three verified modes for the reference
+`1189:8890` pad: off, steady red, and reactive. The build includes the local
+open-source LED helper when it is present; source-only checkouts can still use
+the documented command in the adapter guide.
+
 ## Reference hardware mapping
 
 The `profiles/ch57x-8890-neutral-controls.yaml` file is compatible with

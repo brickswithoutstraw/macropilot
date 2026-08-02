@@ -6,9 +6,11 @@ and documented protocol implemented by
 (MIT OR Apache-2.0). The reference source reviewed for this kit was commit
 `bdbffca`.
 
-MacroPilot does not bundle the upstream executable or vendor software. Users
-should obtain and review the upstream tool independently before any hardware
-configuration upload.
+MacroPilot does not store the upstream executable or vendor software in this
+source repository. A locally built `MacroPilot.app` may optionally include an
+unmodified `ch57x-keyboard-tool` executable already present on the builder's
+machine to expose the three verified LED modes. Distributors of that bundle
+must retain the upstream license and notices.
 
 The compact configuration protocol used by the reference `1189:8890` pad was
 cross-checked against [this public reverse-engineering discussion](https://stackoverflow.com/questions/75870303/hid-macropad-key-programming-doesnt-give-expected-results).

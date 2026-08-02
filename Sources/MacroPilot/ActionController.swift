@@ -71,6 +71,22 @@ final class ActionController {
     alert.runModal()
   }
 
+  func setLED(mode: Int, name: String) {
+    guard let tool = Bundle.main.url(forResource: "ch57x-keyboard-tool", withExtension: nil) else {
+      announce("LED helper is unavailable in this development build")
+      return
+    }
+    let process = Process()
+    process.executableURL = tool
+    process.arguments = ["--product-id", "0x8890", "led", String(mode)]
+    do {
+      try process.run()
+      announce("LED mode requested: \(name)")
+    } catch {
+      announce("Could not set LED mode: \(error.localizedDescription)")
+    }
+  }
+
   private func isConfirmed(_ action: MacroAction) -> Bool {
     guard let pendingConfirmation else { return false }
     return pendingConfirmation.action == action && pendingConfirmation.expires > Date()
