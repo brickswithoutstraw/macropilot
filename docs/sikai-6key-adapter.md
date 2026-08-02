@@ -120,6 +120,16 @@ the explicit boot-layer variant, which writes the same neutral layout to layer
 tools/macropilot-sikai-map --apply-macropilot-boot-layout
 ```
 
+If the key IDs do not match the visible physical layout, use the explicit
+calibration mode. It temporarily maps firmware IDs 1–6 to `A`–`F` and the
+three knob inputs to `X`–`Z` in startup layer 0; press each physical control
+in a text field and record its letter, then use that map to create the final
+layout.
+
+```sh
+tools/macropilot-sikai-map --apply-calibration-layout
+```
+
 ## Limits
 
 This adapter configures the key and knob outputs only. LED and RGB control are

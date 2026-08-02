@@ -52,16 +52,28 @@ static int send_packet(libusb_device_handle *handle, const unsigned char packet[
 struct binding { unsigned char key_id; unsigned char hid_code; const char *label; };
 
 static const struct binding macropilot_layout[] = {
-  // Physical layout: knob above the left column; key IDs count from bottom-left.
-  { 4, 0x68, "top-left → F13" },
-  { 5, 0x69, "top-middle → F14" },
-  { 6, 0x6a, "top-right → F15" },
-  { 1, 0x6b, "bottom-left → F16" },
-  { 2, 0x6c, "bottom-middle → F17" },
-  { 3, 0x6d, "bottom-right → F18" },
+  // Verified physical order for this pad's scrambled firmware key IDs.
+  { 3, 0x68, "top-left → F13" },
+  { 6, 0x69, "top-middle → F14" },
+  { 2, 0x6a, "top-right → F15" },
+  { 5, 0x6b, "bottom-left → F16" },
+  { 1, 0x6c, "bottom-middle → F17" },
+  { 4, 0x6d, "bottom-right → F18" },
   {13, 0x6e, "knob counterclockwise → F19" },
   {14, 0x70, "knob press → F21" },
   {15, 0x6f, "knob clockwise → F20" },
+};
+
+static const struct binding calibration_layout[] = {
+  { 1, 0x04, "firmware key 1 → A" },
+  { 2, 0x05, "firmware key 2 → B" },
+  { 3, 0x06, "firmware key 3 → C" },
+  { 4, 0x07, "firmware key 4 → D" },
+  { 5, 0x08, "firmware key 5 → E" },
+  { 6, 0x09, "firmware key 6 → F" },
+  {13, 0x1b, "knob ID 13 → X" },
+  {14, 0x1c, "knob ID 14 → Y" },
+  {15, 0x1d, "knob ID 15 → Z" },
 };
 
 static void print_binding(const struct binding *binding, unsigned char layer) {
@@ -87,6 +99,8 @@ int main(int argc, char **argv) {
                              strcmp(argv[1], "--apply-macropilot-layout") == 0);
   int boot_layout = argc == 2 && (strcmp(argv[1], "--preview-macropilot-boot-layout") == 0 ||
                                   strcmp(argv[1], "--apply-macropilot-boot-layout") == 0);
+  int calibration = argc == 2 && (strcmp(argv[1], "--preview-calibration-layout") == 0 ||
+                                  strcmp(argv[1], "--apply-calibration-layout") == 0);
   int key_a = argc == 2 && (strcmp(argv[1], "--preview-key1-a") == 0 ||
                             strcmp(argv[1], "--apply-key1-a") == 0);
   int boot_key_a = argc == 2 && (strcmp(argv[1], "--preview-key1-a-boot") == 0 ||
@@ -97,17 +111,22 @@ int main(int argc, char **argv) {
   int preview = argc == 2 && (strcmp(argv[1], "--preview-key1-f13") == 0 ||
                                strcmp(argv[1], "--preview-key1-a") == 0 ||
                                strcmp(argv[1], "--preview-key1-a-boot") == 0);
-  if (!apply && !preview && !layout && !boot_layout) {
-    fprintf(stderr, "usage: %s --preview-key1-a | --apply-key1-a | --preview-key1-a-boot | --apply-key1-a-boot | --preview-key1-f13 | --apply-key1-f13 | --preview-macropilot-layout | --apply-macropilot-layout | --preview-macropilot-boot-layout | --apply-macropilot-boot-layout\n", argv[0]);
+  if (!apply && !preview && !layout && !boot_layout && !calibration) {
+    fprintf(stderr, "usage: %s --preview-key1-a | --apply-key1-a | --preview-key1-a-boot | --apply-key1-a-boot | --preview-key1-f13 | --apply-key1-f13 | --preview-macropilot-layout | --apply-macropilot-layout | --preview-macropilot-boot-layout | --apply-macropilot-boot-layout | --preview-calibration-layout | --apply-calibration-layout\n", argv[0]);
     return 2;
   }
 
   int apply_layout = argc == 2 && (strcmp(argv[1], "--apply-macropilot-layout") == 0 ||
-                                   strcmp(argv[1], "--apply-macropilot-boot-layout") == 0);
-  if (layout || boot_layout) {
-    unsigned char layout_layer = boot_layout ? 0 : 1;
-    for (size_t i = 0; i < sizeof(macropilot_layout) / sizeof(macropilot_layout[0]); i++) {
-      print_binding(&macropilot_layout[i], layout_layer);
+                                   strcmp(argv[1], "--apply-macropilot-boot-layout") == 0 ||
+                                   strcmp(argv[1], "--apply-calibration-layout") == 0);
+  if (layout || boot_layout || calibration) {
+    unsigned char layout_layer = (boot_layout || calibration) ? 0 : 1;
+    const struct binding *active_layout = calibration ? calibration_layout : macropilot_layout;
+    size_t active_layout_count = calibration
+      ? sizeof(calibration_layout) / sizeof(calibration_layout[0])
+      : sizeof(macropilot_layout) / sizeof(macropilot_layout[0]);
+    for (size_t i = 0; i < active_layout_count; i++) {
+      print_binding(&active_layout[i], layout_layer);
     }
     unsigned char layout_commit[65];
     build_commit(layout_commit);
@@ -125,8 +144,8 @@ int main(int argc, char **argv) {
       libusb_close(layout_handle); libusb_exit(layout_context); return 1;
     }
     int layout_failed = 0;
-    for (size_t i = 0; i < sizeof(macropilot_layout) / sizeof(macropilot_layout[0]); i++) {
-      if (send_binding(layout_handle, &macropilot_layout[i], layout_layer)) { layout_failed = 1; break; }
+    for (size_t i = 0; i < active_layout_count; i++) {
+      if (send_binding(layout_handle, &active_layout[i], layout_layer)) { layout_failed = 1; break; }
       usleep(20000);
     }
     if (!layout_failed) layout_failed = send_packet(layout_handle, layout_commit);
