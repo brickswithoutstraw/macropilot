@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "ai-workbench",
+  "name": "AI Workbench",
+  "description": "A safe, six-key starter profile for agent and voice workflows.",
+  "bindings": [
+    { "input": "f13", "action": "workspace.focus", "label": "Summon", "safety": "safe" },
+    { "input": "f14", "action": "voice.toggle", "label": "Voice", "safety": "safe" },
+    { "input": "f15", "action": "context.capture", "label": "Context", "safety": "review" },
+    { "input": "f16", "action": "response.stop", "label": "Stop", "safety": "safe" },
+    { "input": "f17", "action": "prompt.send", "label": "Send", "safety": "confirm" },
+    { "input": "f18", "action": "workspace.new", "label": "New", "safety": "confirm" },
+    { "input": "f19", "action": "conversation.scrollUp", "label": "Scroll up", "safety": "safe" },
+    { "input": "f20", "action": "conversation.scrollDown", "label": "Scroll down", "safety": "safe" },
+    { "input": "f21", "action": "profile.next", "label": "Next profile", "safety": "safe" }
+  ]
+}

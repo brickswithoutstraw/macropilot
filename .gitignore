@@ -1,0 +1,10 @@
+.DS_Store
+
+# Locally compiled diagnostics and downloaded upstream release artifacts.
+tools/ch57x-keyboard-tool
+tools/ch57x-keyboard-tool-universal-apple-darwin.tar.gz
+tools/example-mapping.yaml
+tools/macropilot-hid-probe
+tools/macropilot-usb-inspect
+tools/macropilot-usb-probe
+tools/macropilot-sikai-map

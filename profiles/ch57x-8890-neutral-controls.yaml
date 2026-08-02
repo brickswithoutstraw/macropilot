@@ -1,0 +1,23 @@
+# MacroPilot's safe, device-neutral starting mapping for the CH57x 0x8890.
+#
+# This file writes neutral F13–F21 events to the hardware. MacroPilot then
+# maps those events to a chosen app profile. No vendor software is required.
+#
+# Physical orientation: knob on the LEFT, six keys on the RIGHT.
+# The firmware's native reference orientation puts knobs on the right, so the
+# upside-down value makes this grid match the hardware as it sits on the desk.
+model: ch57x-2
+orientation: upsidedown
+rows: 2
+columns: 3
+knobs: 1
+layers:
+  - buttons:
+      # Visible top row: Summon, Voice, Context
+      - ["f13", "f14", "f15"]
+      # Visible bottom row: Stop, Send, New
+      - ["f16", "f17", "f18"]
+    knobs:
+      - ccw: "f19"
+        press: "f21"
+        cw: "f20"

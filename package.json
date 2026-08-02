@@ -1,0 +1,16 @@
+{
+  "name": "macropilot-kit",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Open, local-first profiles for programmable macropads.",
+  "type": "module",
+  "scripts": {
+    "inspect": "node bin/macropilot-kit.mjs inspect profiles/ai-workbench.json",
+    "validate": "node bin/macropilot-kit.mjs validate profiles/ai-workbench.json",
+    "test": "node --test test/*.test.mjs"
+  },
+  "bin": {
+    "macropilot-kit": "bin/macropilot-kit.mjs"
+  },
+  "license": "Apache-2.0"
+}
