@@ -21,7 +21,7 @@ final class ActionController {
     case .summon:
       activateCodexOrMacroPilot()
     case .voice:
-      announce("Voice is ready for a configurable dictation shortcut")
+      announce("Voice: sent Control-Option-B to the configured ChatGPT voice shortcut")
     case .captureContext:
       captureContext()
     case .stop:

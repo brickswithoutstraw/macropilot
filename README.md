@@ -37,7 +37,8 @@ npm test
 
 ## Phase 1: macOS companion
 
-`MacroPilot` is a local menu-bar companion for the neutral F13–F21 layout.
+`MacroPilot` is a local menu-bar companion for a neutral Control-Option-A
+through I layout.
 It listens for the macropad globally and gives the controls ordinary Mac
 meaning: summon Codex, capture clipboard context, stop, guarded send/new-task
 actions, and profile cycling. It does not use an API key or transmit your
@@ -53,11 +54,12 @@ next distribution step, so people will not need developer tools to use it.
 The first time you use an action that sends a shortcut, choose **Check
 Accessibility Permission** from the `MP` menu-bar item and approve it in macOS
 System Settings. `Send` and `New Task` require a second press within three
-seconds. Voice is deliberately a visible Phase 1 placeholder until we add a
-local microphone/dictation permission flow in the packaged app.
+seconds. For Voice, configure ChatGPT desktop's Voice shortcut as
+Control-Option-B; MacroPilot sends that exact chord and does not need its own
+microphone permission.
 
-Default actions are F13 summon, F14 voice, F15 capture context, F16 stop,
-F17 send, F18 new task, F19/F20 profile previous/next, and F21 cycle profile.
+Default actions are Control-Option-A summon, B voice, C capture context, D
+stop, E send, F new task, G/I profile previous/next, and H cycle profile.
 
 ## Reference hardware mapping
 

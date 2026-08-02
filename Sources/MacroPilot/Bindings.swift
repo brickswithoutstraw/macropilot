@@ -1,3 +1,4 @@
+import AppKit
 import Carbon.HIToolbox
 
 enum MacroAction: String, CaseIterable, Identifiable {
@@ -41,19 +42,19 @@ struct KeyBinding: Identifiable, Equatable {
 
 enum DefaultBindings {
   static let all: [KeyBinding] = [
-    .init(keyCode: UInt16(kVK_F13), label: "F13", action: .summon),
-    .init(keyCode: UInt16(kVK_F14), label: "F14", action: .voice),
-    .init(keyCode: UInt16(kVK_F15), label: "F15", action: .captureContext),
-    .init(keyCode: UInt16(kVK_F16), label: "F16", action: .stop),
-    .init(keyCode: UInt16(kVK_F17), label: "F17", action: .send),
-    .init(keyCode: UInt16(kVK_F18), label: "F18", action: .newTask),
-    .init(keyCode: UInt16(kVK_F19), label: "F19", action: .previousProfile),
-    .init(keyCode: UInt16(kVK_F20), label: "F20", action: .nextProfile),
-    // Carbon does not export kVK_F21, but macOS assigns it virtual key 96.
-    .init(keyCode: 96, label: "F21", action: .cycleProfile)
+    .init(keyCode: UInt16(kVK_ANSI_A), label: "⌃⌥A", action: .summon),
+    .init(keyCode: UInt16(kVK_ANSI_B), label: "⌃⌥B", action: .voice),
+    .init(keyCode: UInt16(kVK_ANSI_C), label: "⌃⌥C", action: .captureContext),
+    .init(keyCode: UInt16(kVK_ANSI_D), label: "⌃⌥D", action: .stop),
+    .init(keyCode: UInt16(kVK_ANSI_E), label: "⌃⌥E", action: .send),
+    .init(keyCode: UInt16(kVK_ANSI_F), label: "⌃⌥F", action: .newTask),
+    .init(keyCode: UInt16(kVK_ANSI_G), label: "⌃⌥G", action: .previousProfile),
+    .init(keyCode: UInt16(kVK_ANSI_I), label: "⌃⌥I", action: .nextProfile),
+    .init(keyCode: UInt16(kVK_ANSI_H), label: "⌃⌥H", action: .cycleProfile)
   ]
 
-  static func action(for keyCode: UInt16) -> MacroAction? {
-    all.first(where: { $0.keyCode == keyCode })?.action
+  static func action(for keyCode: UInt16, modifiers: NSEvent.ModifierFlags) -> MacroAction? {
+    guard modifiers.contains([.control, .option]) else { return nil }
+    return all.first(where: { $0.keyCode == keyCode })?.action
   }
 }

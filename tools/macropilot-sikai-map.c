@@ -53,15 +53,15 @@ struct binding { unsigned char key_id; unsigned char hid_code; const char *label
 
 static const struct binding macropilot_layout[] = {
   // Verified physical order for this pad's scrambled firmware key IDs.
-  { 3, 0x68, "top-left → F13" },
-  { 6, 0x69, "top-middle → F14" },
-  { 2, 0x6a, "top-right → F15" },
-  { 5, 0x6b, "bottom-left → F16" },
-  { 1, 0x6c, "bottom-middle → F17" },
-  { 4, 0x6d, "bottom-right → F18" },
-  {13, 0x6e, "knob counterclockwise → F19" },
-  {14, 0x70, "knob press → F21" },
-  {15, 0x6f, "knob clockwise → F20" },
+  { 3, 0x04, "top-left → Control-Option-A" },
+  { 6, 0x05, "top-middle → Control-Option-B" },
+  { 2, 0x06, "top-right → Control-Option-C" },
+  { 5, 0x07, "bottom-left → Control-Option-D" },
+  { 1, 0x08, "bottom-middle → Control-Option-E" },
+  { 4, 0x09, "bottom-right → Control-Option-F" },
+  {13, 0x0a, "knob counterclockwise → Control-Option-G" },
+  {14, 0x0b, "knob press → Control-Option-H" },
+  {15, 0x0c, "knob clockwise → Control-Option-I" },
 };
 
 static const struct binding calibration_layout[] = {
@@ -85,10 +85,10 @@ static void print_binding(const struct binding *binding, unsigned char layer) {
 }
 
 static int send_binding(libusb_device_handle *handle, const struct binding *binding,
-                        unsigned char layer) {
+                        unsigned char layer, unsigned char modifier) {
   unsigned char first[65], second[65];
   build_simple_key_part(first, binding->key_id, layer, 0, 0, 0);
-  build_simple_key_part(second, binding->key_id, layer, 1, 0, binding->hid_code);
+  build_simple_key_part(second, binding->key_id, layer, 1, modifier, binding->hid_code);
   if (send_packet(handle, first)) return 1;
   usleep(20000);
   return send_packet(handle, second);
@@ -121,6 +121,7 @@ int main(int argc, char **argv) {
                                    strcmp(argv[1], "--apply-calibration-layout") == 0);
   if (layout || boot_layout || calibration) {
     unsigned char layout_layer = (boot_layout || calibration) ? 0 : 1;
+    unsigned char layout_modifier = calibration ? 0x00 : 0x05; // left Control + left Option
     const struct binding *active_layout = calibration ? calibration_layout : macropilot_layout;
     size_t active_layout_count = calibration
       ? sizeof(calibration_layout) / sizeof(calibration_layout[0])
@@ -145,7 +146,7 @@ int main(int argc, char **argv) {
     }
     int layout_failed = 0;
     for (size_t i = 0; i < active_layout_count; i++) {
-      if (send_binding(layout_handle, &active_layout[i], layout_layer)) { layout_failed = 1; break; }
+      if (send_binding(layout_handle, &active_layout[i], layout_layer, layout_modifier)) { layout_failed = 1; break; }
       usleep(20000);
     }
     if (!layout_failed) layout_failed = send_packet(layout_handle, layout_commit);

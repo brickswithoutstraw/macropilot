@@ -22,7 +22,7 @@ final class MacroPilotApp: NSObject, NSApplicationDelegate {
     controller.onUpdate = { [weak self] text in
       DispatchQueue.main.async { self?.statusItem.button?.toolTip = text }
     }
-    controller.announce("MacroPilot ready — listening for F13–F21")
+    controller.announce("MacroPilot ready — listening for Control-Option-A through I")
   }
 
   func applicationWillTerminate(_ notification: Notification) {
@@ -47,7 +47,7 @@ final class MacroPilotApp: NSObject, NSApplicationDelegate {
 
   private func installKeyboardMonitor() {
     eventMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
-      guard let action = DefaultBindings.action(for: event.keyCode) else { return }
+      guard let action = DefaultBindings.action(for: event.keyCode, modifiers: event.modifierFlags) else { return }
       DispatchQueue.main.async { self?.controller.perform(action) }
     }
   }

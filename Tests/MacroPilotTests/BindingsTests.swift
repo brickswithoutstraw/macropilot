@@ -3,7 +3,9 @@ import Testing
 
 @Test func allNeutralKeysHaveAnAction() {
   #expect(DefaultBindings.all.count == 9)
-  #expect(DefaultBindings.all.allSatisfy { DefaultBindings.action(for: $0.keyCode) != nil })
+  #expect(DefaultBindings.all.allSatisfy {
+    DefaultBindings.action(for: $0.keyCode, modifiers: [.control, .option]) != nil
+  })
 }
 
 @Test func actionSafetyMatchesIntent() {
