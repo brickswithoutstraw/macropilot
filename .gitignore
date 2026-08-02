@@ -1,4 +1,5 @@
 .DS_Store
+.build/
 
 # Locally compiled diagnostics and downloaded upstream release artifacts.
 tools/ch57x-keyboard-tool

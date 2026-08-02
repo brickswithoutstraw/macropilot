@@ -35,6 +35,27 @@ npm run inspect
 npm test
 ```
 
+## Phase 1: macOS companion
+
+`MacroPilot` is a local menu-bar companion for the neutral F13–F21 layout.
+It listens for the macropad globally and gives the controls ordinary Mac
+meaning: summon Codex, capture clipboard context, stop, guarded send/new-task
+actions, and profile cycling. It does not use an API key or transmit your
+context anywhere.
+
+```sh
+swift run MacroPilot
+```
+
+The first time you use an action that sends a shortcut, choose **Check
+Accessibility Permission** from the `MP` menu-bar item and approve it in macOS
+System Settings. `Send` and `New Task` require a second press within three
+seconds. Voice is deliberately a visible Phase 1 placeholder until we add a
+local microphone/dictation permission flow in the packaged app.
+
+Default actions are F13 summon, F14 voice, F15 capture context, F16 stop,
+F17 send, F18 new task, F19/F20 profile previous/next, and F21 cycle profile.
+
 ## Reference hardware mapping
 
 The `profiles/ch57x-8890-neutral-controls.yaml` file is compatible with

@@ -1,0 +1,64 @@
+import AppKit
+import ApplicationServices
+
+@main
+@MainActor
+final class MacroPilotApp: NSObject, NSApplicationDelegate {
+  private let controller = ActionController()
+  private var statusItem: NSStatusItem!
+  private var eventMonitor: Any?
+
+  static func main() {
+    let app = NSApplication.shared
+    let delegate = MacroPilotApp()
+    app.delegate = delegate
+    app.setActivationPolicy(.accessory)
+    app.run()
+  }
+
+  func applicationDidFinishLaunching(_ notification: Notification) {
+    installStatusItem()
+    installKeyboardMonitor()
+    controller.onUpdate = { [weak self] text in
+      DispatchQueue.main.async { self?.statusItem.button?.toolTip = text }
+    }
+    controller.announce("MacroPilot ready — listening for F13–F21")
+  }
+
+  func applicationWillTerminate(_ notification: Notification) {
+    if let eventMonitor { NSEvent.removeMonitor(eventMonitor) }
+  }
+
+  private func installStatusItem() {
+    statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+    statusItem.button?.title = "MP"
+    statusItem.button?.toolTip = "MacroPilot starting"
+
+    let menu = NSMenu()
+    menu.addItem(NSMenuItem(title: "MacroPilot", action: nil, keyEquivalent: ""))
+    menu.addItem(.separator())
+    menu.addItem(NSMenuItem(title: "Check Accessibility Permission", action: #selector(requestAccessibility), keyEquivalent: ""))
+    menu.addItem(NSMenuItem(title: "Show Last Action", action: #selector(showLastAction), keyEquivalent: ""))
+    menu.addItem(.separator())
+    menu.addItem(NSMenuItem(title: "Quit MacroPilot", action: #selector(quit), keyEquivalent: "q"))
+    menu.items.forEach { $0.target = self }
+    statusItem.menu = menu
+  }
+
+  private func installKeyboardMonitor() {
+    eventMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
+      guard let action = DefaultBindings.action(for: event.keyCode) else { return }
+      DispatchQueue.main.async { self?.controller.perform(action) }
+    }
+  }
+
+  @objc private func requestAccessibility() {
+    let promptKey = "AXTrustedCheckOptionPrompt" as CFString
+    let options = [promptKey: true] as CFDictionary
+    let trusted = AXIsProcessTrustedWithOptions(options)
+    controller.announce(trusted ? "Accessibility permission is enabled" : "Approve MacroPilot in System Settings, then return here")
+  }
+
+  @objc private func showLastAction() { controller.presentStatus() }
+  @objc private func quit() { NSApp.terminate(nil) }
+}
