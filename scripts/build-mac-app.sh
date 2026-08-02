@@ -15,6 +15,12 @@ fi
 mkdir -p "$app_dir/Contents/MacOS" "$app_dir/Contents/Resources"
 cp "$project_root/.build/release/MacroPilot" "$app_dir/Contents/MacOS/MacroPilot"
 cp "$project_root/MacApp/Info.plist" "$app_dir/Contents/Info.plist"
+xcrun actool "$project_root/MacApp/Assets.xcassets" \
+  --compile "$app_dir/Contents/Resources" \
+  --platform macosx \
+  --minimum-deployment-target 14.0 \
+  --app-icon AppIcon \
+  --output-partial-info-plist "$app_dir/Contents/Resources/assetcatalog-info.plist"
 
 # This optional Apache-licensed helper enables the three verified LED modes.
 # It is intentionally not checked into this repository as a platform binary.

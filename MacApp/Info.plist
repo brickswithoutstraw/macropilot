@@ -8,6 +8,8 @@
   <string>MacroPilot</string>
   <key>CFBundleIdentifier</key>
   <string>com.brickswithoutstraw.macropilot</string>
+  <key>CFBundleIconName</key>
+  <string>AppIcon</string>
   <key>CFBundleName</key>
   <string>MacroPilot</string>
   <key>CFBundlePackageType</key>

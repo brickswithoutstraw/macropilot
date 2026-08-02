@@ -1,6 +1,7 @@
 .DS_Store
 .build/
 dist/
+MacApp/AppIcon.iconset/
 
 # Locally compiled diagnostics and downloaded upstream release artifacts.
 tools/ch57x-keyboard-tool
