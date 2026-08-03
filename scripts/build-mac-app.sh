@@ -28,6 +28,9 @@ xcrun actool "$project_root/MacApp/Assets.xcassets" \
 if [[ -x "$project_root/tools/ch57x-keyboard-tool" ]]; then
   cp "$project_root/tools/ch57x-keyboard-tool" "$app_dir/Contents/Resources/ch57x-keyboard-tool"
 fi
+if [[ -x "$project_root/tools/macropilot-sikai-map" ]]; then
+  cp "$project_root/tools/macropilot-sikai-map" "$app_dir/Contents/Resources/macropilot-sikai-map"
+fi
 
 xattr -cr "$app_dir"
 codesign --force --sign - "$app_dir"

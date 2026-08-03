@@ -7,6 +7,7 @@ final class MacroPilotApp: NSObject, NSApplicationDelegate {
   private let controller = ActionController()
   private var statusItem: NSStatusItem!
   private var eventMonitor: Any?
+  private var setupWizard: SetupWizard?
 
   static func main() {
     let app = NSApplication.shared
@@ -45,6 +46,7 @@ final class MacroPilotApp: NSObject, NSApplicationDelegate {
     menu.addItem(NSMenuItem(title: "MacroPilot", action: nil, keyEquivalent: ""))
     menu.addItem(.separator())
     menu.addItem(NSMenuItem(title: "Voice Setup…", action: #selector(showVoiceSetup), keyEquivalent: ""))
+    menu.addItem(NSMenuItem(title: "Set Up Pad…", action: #selector(showPadSetup), keyEquivalent: ""))
     menu.addItem(NSMenuItem(title: "Check Accessibility Permission", action: #selector(requestAccessibility), keyEquivalent: ""))
     let leds = NSMenuItem(title: "LEDs", action: nil, keyEquivalent: "")
     let ledMenu = NSMenu()
@@ -77,6 +79,13 @@ final class MacroPilotApp: NSObject, NSApplicationDelegate {
 
   @objc private func showLastAction() { controller.presentStatus() }
   @objc private func showVoiceSetup() { controller.presentVoiceSetup() }
+  @objc private func showPadSetup() {
+    let wizard = SetupWizard()
+    setupWizard = wizard
+    wizard.showWindow(nil)
+    wizard.window?.makeKeyAndOrderFront(nil)
+    NSApp.activate(ignoringOtherApps: true)
+  }
   @objc private func ledOff() { controller.setLED(mode: 0, name: "off") }
   @objc private func ledSteady() { controller.setLED(mode: 1, name: "steady red") }
   @objc private func ledReactive() { controller.setLED(mode: 2, name: "reactive") }

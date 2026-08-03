@@ -86,6 +86,11 @@ the documented command in the adapter guide.
 The pilot mark in the menu bar is a macOS template image, so the system tints
 it automatically for light and dark menu bars.
 
+Choose **Set Up Pad…** from the `MP` menu to use the first-beta setup window.
+It supports the verified wired six-key/one-knob `1189:8890` reference pad:
+test its physical order, apply the known-good startup-layer mapping, and choose
+an LED mode without returning to Terminal.
+
 ## Reference hardware mapping
 
 The `profiles/ch57x-8890-neutral-controls.yaml` file is compatible with
